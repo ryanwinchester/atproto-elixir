@@ -1,7 +1,17 @@
 defmodule NSID.Validator do
   @moduledoc """
   Validates NSIDs and its parts.
+
+  Covers the same validations as [bluesky-social/atproto/nsid].
+
+  [bluesky-social/atproto/nsid]: https://github.com/bluesky-social/atproto/blob/main/packages/nsid/src/index.ts
   """
+
+  @max_domain_length 253
+  @max_label_length 63
+  @max_name_length 128
+
+  @max_nsid_length @max_domain_length + 1 + @max_name_length
 
   @doc """
   Validate an NSID.
@@ -23,8 +33,9 @@ defmodule NSID.Validator do
   end
 
   def validate(nsid) when is_binary(nsid) do
-    with nsid_parts = String.split(nsid, "."),
-         :ok <- validate_ascii(nsid),
+    nsid_parts = String.split(nsid, ".")
+
+    with :ok <- validate_ascii(nsid),
          :ok <- validate_length(nsid),
          :ok <- validate_parts(nsid_parts) do
       :ok
@@ -51,12 +62,15 @@ defmodule NSID.Validator do
     |> regex_validate()
   end
 
-  def regex_validate(nsid) when is_binary(nsid) and byte_size(nsid) > 253 + 1 + 128 do
+  def regex_validate(nsid) when is_binary(nsid) and byte_size(nsid) > @max_nsid_length do
     {:error, "NSID is too long (382 chars max)"}
   end
 
   def regex_validate(nsid) when is_binary(nsid) do
-    if Regex.match?(~r/^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(\.[a-zA-Z]([a-zA-Z0-9-]{0,126}[a-zA-Z0-9])?)$/, nsid) do
+    if Regex.match?(
+         ~r/^[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(\.[a-zA-Z]([a-zA-Z0-9-]{0,126}[a-zA-Z0-9])?)$/,
+         nsid
+       ) do
       :ok
     else
       {:error, "NSID didn't validate via regex"}
@@ -76,41 +90,45 @@ defmodule NSID.Validator do
   end
 
   defp validate_length(nsid_str) do
-    if byte_size(nsid_str) <= 253 + 1 + 128 do
+    if byte_size(nsid_str) <= @max_nsid_length do
       :ok
     else
       {:error, "NSID is too long (382 chars max)"}
     end
   end
 
+  ## Parts.
+
   defp validate_parts(nsid_parts) do
-    with {name, authority_parts} = List.pop_at(nsid_parts, -1),
-         :ok <- validate_parts_count(nsid_parts),
+    {name, domain_labels} = List.pop_at(nsid_parts, -1)
+
+    with :ok <- validate_parts_count(nsid_parts),
          :ok <- validate_name(name),
-         :ok <- validate_domain_parts(authority_parts) do
+         :ok <- validate_labels(domain_labels) do
       :ok
     end
   end
 
   defp validate_parts_count([_one, _two, _three | _]), do: :ok
+  defp validate_parts_count(_), do: {:error, "NSID authority must contain at least three parts"}
 
-  defp validate_parts_count(_) do
-    {:error, "NSID authority must contain at least three parts"}
-  end
+  ## Name.
 
   defp validate_name("*"), do: :ok
 
   defp validate_name(name) do
-    with :ok <- validate_name_part_length(name),
+    with :ok <- validate_name_length(name),
          :ok <- validate_not_ends_with_dash(name),
          :ok <- validate_starts_with_ascii_letter(name) do
       :ok
     end
   end
 
-  defp validate_domain_parts(domain_parts) do
-    Enum.reduce_while(domain_parts, :ok, fn part, _acc ->
-      case validate_domain_part(part) do
+  ## Labels.
+
+  defp validate_labels(domain_labels) do
+    Enum.reduce_while(domain_labels, :ok, fn label, _acc ->
+      case validate_label(label) do
         :ok ->
           {:cont, :ok}
 
@@ -120,33 +138,41 @@ defmodule NSID.Validator do
     end)
   end
 
-  defp validate_domain_part(part) do
-    with :ok <- validate_domain_part_length(part),
-         :ok <- validate_not_ends_with_dash(part),
-         :ok <- validate_starts_with_ascii_letter(part) do
+  defp validate_label(label) do
+    with :ok <- validate_label_length(label),
+         :ok <- validate_not_ends_with_dash(label),
+         :ok <- validate_starts_with_ascii_letter(label) do
       :ok
     end
   end
 
-  defp validate_domain_part_length(""), do: {:error, "NSID parts can not be empty"}
+  ## Label length.
 
-  defp validate_domain_part_length(part) when byte_size(part) > 63,
+  defp validate_label_length(""), do: {:error, "NSID parts can not be empty"}
+
+  defp validate_label_length(label) when byte_size(label) > @max_label_length,
     do: {:error, "NSID domain part too long (max 63 chars)"}
 
-  defp validate_domain_part_length(_), do: :ok
+  defp validate_label_length(_), do: :ok
 
-  defp validate_name_part_length(""), do: {:error, "NSID parts can not be empty"}
+  ## Name length.
 
-  defp validate_name_part_length(part) when byte_size(part) > 127,
-    do: {:error, "NSID name part too long (max 127 chars)"}
+  defp validate_name_length(""), do: {:error, "NSID parts can not be empty"}
 
-  defp validate_name_part_length(_part), do: :ok
+  defp validate_name_length(label) when byte_size(label) > @max_name_length,
+    do: {:error, "NSID name part too long (max 128 chars)"}
+
+  defp validate_name_length(_name), do: :ok
+
+  ## Starts with ASCII letter.
 
   defp validate_starts_with_ascii_letter(<<c, _rest::binary>>) when c in ?a..?z or c in ?A..?Z,
     do: :ok
 
   defp validate_starts_with_ascii_letter(_part),
     do: {:error, "NSID parts must start with ASCII letter"}
+
+  ## Does not end with dash.
 
   defp validate_not_ends_with_dash(part) do
     if String.ends_with?(part, "-") do

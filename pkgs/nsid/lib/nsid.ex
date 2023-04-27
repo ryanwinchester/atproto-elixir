@@ -32,7 +32,50 @@ defmodule NSID do
   defstruct [:authority, :name]
 
   @doc """
-  Parse an NSID string.
+  Create a new, valid NSID.
+
+  ## Example
+
+      iex> NSID.new("example.com", "thing")
+      {:ok, %NSID{authority: "example.com", name: "thing"}}
+
+      iex> NSID.new("example.com", "-thing")
+      {:error, "NSID parts must start with ASCII letter"}
+
+  """
+  @spec new(String.t(), String.t()) :: {:ok, t()} | {:error, reason :: String.t()}
+  def new(authority, name) do
+    nsid = %NSID{authority: authority, name: name}
+
+    with :ok <- validate(nsid) do
+      {:ok, nsid}
+    end
+  end
+
+  @doc """
+  Create a new, valid NSID.
+
+  Raises an `ArgumentError` if the NSID is invalid.
+
+  ## Example
+
+      iex> NSID.new!("example.com", "thing")
+      %NSID{authority: "example.com", name: "thing"}
+
+  """
+  @spec new!(String.t(), String.t()) :: t()
+  def new!(authority, name) do
+    case new(authority, name) do
+      {:ok, nsid} ->
+        nsid
+
+      {:error, reason} ->
+        raise ArgumentError, reason
+    end
+  end
+
+  @doc """
+  Parses an NSID string into its componenets, without further validation.
 
   ## Examples
 
