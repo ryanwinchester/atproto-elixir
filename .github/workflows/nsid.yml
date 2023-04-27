@@ -20,10 +20,10 @@ jobs:
         elixir: ['1.14.x']
         otp: ['25.x']
     env:
-      working-directory: pkgs/nsid
+      work_dir: pkgs/nsid
     defaults:
       run:
-        working-directory: ${{env.working-directory}}
+        working-directory: ${{env.work_dir}}
     steps:
       # Checkout the repo.
       - name: Checkout repo
@@ -39,14 +39,14 @@ jobs:
       - name: Build cache
         uses: actions/cache@v3
         with:
-          path: ${{env.working-directory}}/_build
+          path: ${{env.work_dir}}/_build
           key: build-${{matrix.os}}-${{matrix.otp}}-${{matrix.elixir}}-${{ hashFiles('pkgs/nsid/lib/**/*.ex') }}
           restore-keys: build-${{matrix.os}}-${{matrix.otp}}-${{matrix.elixir}}-
       # Get and compile elixir deps.
       - name: Elixir Deps cache
         uses: actions/cache@v3
         with:
-          path: ${{env.working-directory}}/deps
+          path: ${{env.work_dir}}/deps
           key: mix-${{ matrix.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-${{ hashFiles('pkgs/nsid/**/mix.lock') }}
           restore-keys: mix-${{ matrix.os }}-${{ matrix.elixir }}-${{ matrix.otp }}-
       - run: mix deps.get
@@ -66,7 +66,7 @@ jobs:
         uses: actions/cache@v3
         id: plt_cache
         with:
-          path: ${{env.working-directory}}/priv/plts
+          path: ${{env.work_dir}}/priv/plts
           key: plt-${{ matrix.os }}-${{ matrix.elixir }}-${{ matrix.otp }}
           restore-keys: plt-${{ matrix.os }}-${{ matrix.elixir }}-${{ matrix.otp }}
       # Create PLTs if no cache was found
