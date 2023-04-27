@@ -89,13 +89,10 @@ defmodule NSID.Validator do
     end
   end
 
-  defp validate_length(nsid_str) do
-    if byte_size(nsid_str) <= @max_nsid_length do
-      :ok
-    else
-      {:error, "NSID is too long (382 chars max)"}
-    end
-  end
+  defp validate_length(nsid) when byte_size(nsid) > @max_nsid_length,
+    do: {:error, "NSID is too long (382 chars max)"}
+
+  defp validate_length(_), do: :ok
 
   ## Parts.
 
@@ -159,7 +156,7 @@ defmodule NSID.Validator do
 
   defp validate_name_length(""), do: {:error, "NSID parts can not be empty"}
 
-  defp validate_name_length(label) when byte_size(label) > @max_name_length,
+  defp validate_name_length(name) when byte_size(name) > @max_name_length,
     do: {:error, "NSID name part too long (max 128 chars)"}
 
   defp validate_name_length(_name), do: :ok
