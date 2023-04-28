@@ -12,7 +12,7 @@ on:
       - pkgs/lexicon/**
 jobs:
   test:
-    name: Test
+    name: Lexicon Test
     runs-on: ${{matrix.os}}
     strategy:
       matrix:

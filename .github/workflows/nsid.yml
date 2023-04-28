@@ -12,7 +12,7 @@ on:
       - pkgs/nsid/**
 jobs:
   test:
-    name: Test
+    name: NSID Test
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
