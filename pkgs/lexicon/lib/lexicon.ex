@@ -5,6 +5,17 @@ defmodule Lexicon do
 
   alias Lexicon.Doc
 
+  def to_ipld(lexicon_values) when is_list(lexicon_values) do
+    Enum.map(lexicon_values, &to_ipld/1)
+  end
+
+  def to_ipld(_lexicon_value) do
+    # cond do
+    #   CID.cid?(lexicon_value) -> lexicon_value
+    #   true -> lexicon_value
+    # end
+  end
+
   @doc """
   Add a lexicon doc.
 

@@ -23,6 +23,23 @@ defmodule Lexicon.Doc do
   @enforce_keys [:id, :defs]
   defstruct [:id, :revision, :description, :defs, lexicon: 1]
 
+  @user_types %{
+    "array" => Lexicon.Array,
+    "blob" => Lexicon.Blob,
+    "boolean" => Lexicon.Boolean,
+    "bytes" => Lexicon.Bytes,
+    "cid-link" => Lexicon.CIDLink,
+    "integer" => Lexicon.Integer,
+    "object" => Lexicon.Object,
+    "procedure" => Lexicon.XRPC.Procedure,
+    "query" => Lexicon.XRPC.Query,
+    "record" => Lexicon.Record,
+    "string" => Lexicon.String,
+    "subscription" => Lexicon.Subscription,
+    "token" => Lexicon.Token,
+    "unknown" => Lexicon.Unknown
+  }
+
   @doc """
   Parse a Lexicon document.
   """
@@ -35,8 +52,16 @@ defmodule Lexicon.Doc do
     |> parse()
   end
 
-  def parse(%{} = _doc) do
-    # TODO: Parse the JSON-decoded document.
+  def parse(%{"lexicon" => 1} = doc) do
+    struct(Doc, Map.update!(doc, "defs", &parse_defs/1))
+  end
+
+  # Where `defs` is a map where the key is a `def_id` (e.g. "main") and the
+  # value is a `Lexicon.UserType`.
+  defp parse_defs(defs) do
+    Enum.into(defs, %{}, fn {def_id, %{"type" => type} = def} ->
+      {def_id, apply(@user_types[type], :parse, [def])}
+    end)
   end
 
   @doc """

@@ -2,6 +2,8 @@
 
 [![Lexicon](https://github.com/ryanwinchester/atproto/actions/workflows/lexicon.yml/badge.svg)](https://github.com/ryanwinchester/atproto/actions/workflows/lexicon.yml)
  [![NSID](https://github.com/ryanwinchester/atproto/actions/workflows/nsid.yml/badge.svg)](https://github.com/ryanwinchester/atproto/actions/workflows/nsid.yml)
+ [![XRPC](https://github.com/ryanwinchester/atproto/actions/workflows/xrpc.yml/badge.svg)](https://github.com/ryanwinchester/atproto/actions/workflows/xrpc.yml)
+ [![XRPC Server](https://github.com/ryanwinchester/atproto/actions/workflows/xrpc-server.yml/badge.svg)](https://github.com/ryanwinchester/atproto/actions/workflows/xrpc-server.yml)
 
 **The Authenticated Transfer Protocol**, aka **ATP**, is a protocol for large-scale distributed social applications.
 
