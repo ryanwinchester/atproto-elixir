@@ -1,8 +1,7 @@
 defmodule LexiconTest do
-  use ExUnit.Case
-  doctest Lexicon
+  use ExUnit.Case, async: true
 
-  test "greets the world" do
-    assert Lexicon.hello() == :world
+  test "nothing" do
+    assert true
   end
 end

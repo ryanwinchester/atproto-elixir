@@ -24,3 +24,7 @@ lexicon-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Dialyzer files.
+/priv/plts/*.plt
+/priv/plts/*.plt.hash

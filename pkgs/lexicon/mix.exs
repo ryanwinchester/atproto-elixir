@@ -7,7 +7,10 @@ defmodule Lexicon.MixProject do
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/dialyzer.plt"}
+      ]
     ]
   end
 
@@ -21,7 +24,15 @@ defmodule Lexicon.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nsid, path: "../nsid"}
+      # External dependencies.
+      {:jason, "~> 1.4"},
+
+      # Project dependencies.
+      {:nsid, path: "../nsid"},
+
+      # Dev dependencies.
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.3", only: [:dev], runtime: false}
     ]
   end
 end
