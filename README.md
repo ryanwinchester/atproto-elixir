@@ -4,3 +4,14 @@
  [![NSID](https://github.com/ryanwinchester/atproto/actions/workflows/nsid.yml/badge.svg)](https://github.com/ryanwinchester/atproto/actions/workflows/nsid.yml)
 
 **The Authenticated Transfer Protocol**, aka **ATP**, is a protocol for large-scale distributed social applications.
+
+## Project Status
+
+I've just started with the idea that I'd like to do this. I'll be working on it
+in small pieces. If it looks like a good idea, I'll keep going.
+
+- [x] NSID
+- [ ] Lexicon
+- [ ] ... TODO: Add more stuff ...
+- [ ] XRPC
+- [ ] XRPC Server
