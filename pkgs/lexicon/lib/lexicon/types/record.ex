@@ -7,8 +7,6 @@ defmodule Lexicon.Record do
       record: Lexicon.Object
     ]
 
-  @behaviour Lexicon.Parser
-
   @type t :: %__MODULE__{
           type: :record,
           description: String.t() | nil,

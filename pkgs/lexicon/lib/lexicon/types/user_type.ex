@@ -2,6 +2,7 @@ defmodule Lexicon.UserType do
   @moduledoc """
   A Lexicon user type.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           description: String.t() | nil,

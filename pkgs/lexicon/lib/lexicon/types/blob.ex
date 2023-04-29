@@ -2,6 +2,7 @@ defmodule Lexicon.Blob do
   @moduledoc """
   Lexicon blob.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :blob,

@@ -53,7 +53,9 @@ defmodule Lexicon.Parser do
 
   def default_parse(module, %{type: _type} = obj, children) do
     children
-    |> Enum.reduce(obj, fn {child, parser}, obj -> Map.update!(obj, child, &parser.parse/1) end)
+    |> Enum.reduce(obj, fn {child, parser}, obj ->
+      Map.update(obj, child, nil, &parser.parse/1)
+    end)
     |> Enum.map(&module.parse_property/1)
     |> then(&struct(__MODULE__, &1))
   end

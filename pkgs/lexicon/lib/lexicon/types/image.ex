@@ -2,6 +2,7 @@ defmodule Lexicon.Image do
   @moduledoc """
   Lexicon image.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :image,

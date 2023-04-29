@@ -2,6 +2,7 @@ defmodule Lexicon.Ref do
   @moduledoc """
   Lexicon ref.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :ref,

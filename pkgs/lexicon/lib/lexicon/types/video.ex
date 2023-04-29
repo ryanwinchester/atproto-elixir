@@ -2,6 +2,7 @@ defmodule Lexicon.Video do
   @moduledoc """
   Lexicon video.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :video,

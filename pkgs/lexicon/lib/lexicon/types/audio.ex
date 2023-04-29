@@ -2,6 +2,7 @@ defmodule Lexicon.Audio do
   @moduledoc """
   Lexicon audio.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :audio,

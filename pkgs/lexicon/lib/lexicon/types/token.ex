@@ -2,6 +2,7 @@ defmodule Lexicon.Token do
   @moduledoc """
   Lexicon token.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :token,

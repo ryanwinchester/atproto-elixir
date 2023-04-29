@@ -2,6 +2,7 @@ defmodule Lexicon.RefUnion do
   @moduledoc """
   Lexicon ref union.
   """
+  use Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :union,
