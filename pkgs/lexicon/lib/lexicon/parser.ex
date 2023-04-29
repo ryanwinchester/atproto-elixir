@@ -66,5 +66,5 @@ defmodule Lexicon.Parser do
     {key, String.to_existing_atom(type)}
   end
 
-  def default_parse_property(_module, preoperty), do: preoperty
+  def default_parse_property(_module, property), do: property
 end

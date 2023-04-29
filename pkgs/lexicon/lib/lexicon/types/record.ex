@@ -4,7 +4,7 @@ defmodule Lexicon.Record do
   """
   use Lexicon.Parser,
     children: [
-      object: Lexicon.Object
+      record: Lexicon.Object
     ]
 
   @behaviour Lexicon.Parser
