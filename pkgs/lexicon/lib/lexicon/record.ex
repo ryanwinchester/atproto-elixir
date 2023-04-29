@@ -2,6 +2,12 @@ defmodule Lexicon.Record do
   @moduledoc """
   Lexicon record.
   """
+  use Lexicon.Parser,
+    children: [
+      object: Lexicon.Object
+    ]
+
+  @behaviour Lexicon.Parser
 
   @type t :: %__MODULE__{
           type: :record,

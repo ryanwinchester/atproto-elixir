@@ -4,6 +4,8 @@ defmodule Lexicon.Doc do
   See: https://atproto.com/specs/lexicon#interface
   """
 
+  @behaviour Lexicon.Parser
+
   alias __MODULE__
 
   @type nsid :: String.t()
@@ -40,29 +42,19 @@ defmodule Lexicon.Doc do
     "unknown" => Lexicon.Unknown
   }
 
-  @doc """
-  Parse a Lexicon document.
-  """
-  @spec parse(String.t() | map() | t()) :: t()
-  def parse(%Doc{} = doc), do: doc
-
-  def parse(doc) when is_binary(doc) do
-    doc
-    |> Jason.decode!()
-    |> parse()
-  end
-
-  def parse(%{"lexicon" => 1} = doc) do
-    struct(Doc, Map.update!(doc, "defs", &parse_defs/1))
-  end
-
   # Where `defs` is a map where the key is a `def_id` (e.g. "main") and the
   # value is a `Lexicon.UserType`.
-  defp parse_defs(defs) do
-    Enum.into(defs, %{}, fn {def_id, %{"type" => type} = def} ->
-      {def_id, apply(@user_types[type], :parse, [def])}
-    end)
+  @impl Lexicon.Parser
+  def parse_property({:defs, defs}) do
+    defs =
+      Enum.into(defs, %{}, fn {def_id, %{"type" => type} = def} ->
+        {def_id, apply(@user_types[type], :parse, [def])}
+      end)
+
+    {:defs, defs}
   end
+
+  def parse_property(property), do: property
 
   @doc """
   Validate a Lexicon document.
