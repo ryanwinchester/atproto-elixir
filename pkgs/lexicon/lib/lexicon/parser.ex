@@ -26,10 +26,14 @@ defmodule Lexicon.Parser do
       @behaviour Lexicon.Parser
 
       @impl Lexicon.Parser
-      def parse(obj), do: default_parse(__MODULE__, obj, unquote(children))
+      def parse(obj) do
+        Parser.default_parse(__MODULE__, obj, unquote(children))
+      end
 
       @impl Lexicon.Parser
-      def parse_property(property), do: default_parse_property(__MODULE__, property)
+      def parse_property(property) do
+        Parser.default_parse_property(__MODULE__, property)
+      end
 
       defoverridable parse: 1, parse_property: 1
     end
@@ -39,7 +43,7 @@ defmodule Lexicon.Parser do
   The default implementation of `c:parse/1`.
   """
   @spec default_parse(module(), map() | String.t(), keyword()) :: struct()
-  def default_parse(_module, %__MODULE__{} = obj, _children), do: obj
+  def default_parse(module, %module{} = obj, _children), do: obj
 
   def default_parse(module, obj, children) when is_binary(obj) do
     default_parse(module, Jason.decode!(obj, keys: :atoms!), children)
@@ -65,7 +69,7 @@ defmodule Lexicon.Parser do
   """
   @spec default_parse_property(module(), {atom(), any()}) :: {atom(), any()}
   def default_parse_property(_module, {:type, type}) when is_binary(type) do
-    {key, String.to_existing_atom(type)}
+    {:type, String.to_existing_atom(type)}
   end
 
   def default_parse_property(_module, property), do: property

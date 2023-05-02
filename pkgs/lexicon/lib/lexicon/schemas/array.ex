@@ -15,14 +15,14 @@ defmodule Lexicon.Array do
   @enforce_keys [:items]
   defstruct [:description, :items, :min_length, :max_length, type: :array]
 
+  @primitives ~w[boolean number integer string]
+
   @impl Lexicon.Parser
   def parse_property({:items, items}) do
-    primitives = ~w[boolean number integer string]
-
     items =
       case items do
         %{"type" => "ref"} -> Lexicon.Ref.parse(items)
-        %{"type" => type} when type in primitives -> Lexicon.Primitive.parse(items)
+        %{"type" => type} when type in @primitives -> Lexicon.Primitive.parse(items)
         items when is_list(items) -> Enum.map(items, &Lexicon.Ref.parse/1)
       end
 

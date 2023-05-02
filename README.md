@@ -13,7 +13,8 @@ I've just started with the idea that I'd like to do this. I'll be working on it
 in small pieces. If it looks like a good idea, I'll keep going.
 
 - [x] NSID
-- [ ] Lexicon
+- [ ] Lexicon (in progress)
+- [ ] PDS (in progress)
 - [ ] ... TODO: Add more stuff ...
 - [ ] XRPC
 - [ ] XRPC Server

@@ -48,7 +48,7 @@ defmodule Lexicon.Doc do
   def parse_property({:defs, defs}) do
     defs =
       Enum.into(defs, %{}, fn {def_id, %{"type" => type} = def} ->
-        {def_id, apply(@user_types[type], :parse, [def])}
+        {def_id, @user_types[type].parse(def)}
       end)
 
     {:defs, defs}
