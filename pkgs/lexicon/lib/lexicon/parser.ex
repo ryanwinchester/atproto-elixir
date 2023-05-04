@@ -27,12 +27,12 @@ defmodule Lexicon.Parser do
 
       @impl Lexicon.Parser
       def parse(obj) do
-        Parser.default_parse(__MODULE__, obj, unquote(children))
+        Lexicon.Parser.default_parse(__MODULE__, obj, unquote(children))
       end
 
       @impl Lexicon.Parser
       def parse_property(property) do
-        Parser.default_parse_property(__MODULE__, property)
+        Lexicon.Parser.default_parse_property(__MODULE__, property)
       end
 
       defoverridable parse: 1, parse_property: 1
@@ -61,7 +61,7 @@ defmodule Lexicon.Parser do
       Map.update(obj, child, nil, &parser.parse/1)
     end)
     |> Enum.map(&module.parse_property/1)
-    |> then(&struct(__MODULE__, &1))
+    |> then(&struct(module, &1))
   end
 
   @doc """
